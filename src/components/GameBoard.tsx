@@ -250,49 +250,81 @@ const GameBoard: React.FC = () => {
   }
 
   return (
-    // Use flex-col for mobile, md:flex-row might be too complex for this layout
-    // Added max-h-screen to prevent excessive height issues
-    <div className="flex flex-col h-screen max-h-screen bg-gray-800 text-white p-1 md:p-4 space-y-1 md:space-y-2 overflow-hidden">
-
-      {/* Opponent's Area - Use flex-grow/shrink, remove min-h on mobile */}
-      <div className="flex flex-col space-y-1 flex-grow flex-shrink md:flex-1 overflow-hidden">
-        {/* Top bar: Credibility and Deck/Discard */}
-        <div className="flex justify-between items-start space-x-2 flex-shrink-0">
-          <CredibilityTracker
-            playerName="Opponent"
-            credibility={opponentState.credibility}
-            maxCredibility={20}
-            isCurrentPlayer={!isPlayerTurn}
-          />
-          <div className="text-right p-1 md:p-2 bg-gray-700 rounded text-xs md:text-sm">
+    // Redesigned layout with sidebar on desktop and more compact mobile view
+    <div className="flex h-screen max-h-screen bg-background text-foreground overflow-hidden dark">
+      {/* Main game area - takes most of the screen */}
+      <div className="flex flex-col flex-grow overflow-hidden">
+        {/* Game areas container - takes all available height */}
+        <div className="flex flex-col h-full">
+          {/* Opponent area */}
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+            {/* Opponent hand - more compact */}
+            <div className="flex-shrink-0 z-10">
+              <PlayerHand
+                cards={opponentState.hand}
+                isOwnHand={false}
+                onCardClick={() => {}}
+              />
+            </div>
+            
+            {/* Opponent play area - maximized space */}
+            <div className="flex-grow overflow-y-auto border-b border-gray-600 min-h-0">
+              <PlayArea
+                characters={opponentState.playArea.characters}
+                locations={opponentState.playArea.locations}
+                phenomena={opponentState.playArea.phenomena}
+                conspiracies={opponentState.playArea.conspiracies}
+                onCardClick={handleCardClickInPlay}
+                isCurrentPlayer={!isPlayerTurn}
+              />
+            </div>
+          </div>
+          
+          {/* Player area */}
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+            {/* Player play area - maximized space */}
+            <div className="flex-grow overflow-y-auto border-t border-gray-600 min-h-0">
+              <PlayArea
+                characters={playerState.playArea.characters}
+                locations={playerState.playArea.locations}
+                phenomena={playerState.playArea.phenomena}
+                conspiracies={playerState.playArea.conspiracies}
+                onCardClick={handleCardClickInPlay}
+                isCurrentPlayer={isPlayerTurn}
+              />
+            </div>
+            
+            {/* Player hand - more compact */}
+            <div className="flex-shrink-0 z-10">
+              <PlayerHand
+                cards={playerState.hand}
+                isOwnHand={true}
+                onCardClick={handleCardClickInHand}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Sidebar for controls - on desktop only */}
+      <div className="hidden md:flex md:flex-col md:w-64 border-l border-border bg-card p-2 overflow-y-auto">
+        {/* Opponent stats - compact */}
+        <div className="flex items-center justify-between mb-2 p-2 bg-secondary rounded-xl card-shadow">
+          <div>
+            <div className="text-xs font-bold">Opponent</div>
+            <div className="flex items-center">
+              <span className="text-primary font-bold">{opponentState.credibility}</span>
+              <span className="text-xs text-muted-foreground ml-1">/ 20 Cred</span>
+            </div>
+          </div>
+          <div className="text-right text-xs">
             <div>Deck: {opponentState.deck.length}</div>
             <div>Discard: {opponentState.discard.length}</div>
           </div>
         </div>
-        {/* Opponent Hand - Removed fixed height, let PlayerHand control its size */}
-        <div className="flex-shrink-0">
-          <PlayerHand
-            cards={opponentState.hand} // Still shows hidden cards
-            isOwnHand={false}
-            onCardClick={() => {}}
-          />
-        </div>
-        {/* Opponent Play Area - Allow scrolling, ensure it takes remaining space */}
-        <div className="flex-grow overflow-y-auto border border-gray-600 rounded p-1 min-h-0">
-          <PlayArea
-            characters={opponentState.playArea.characters}
-            locations={opponentState.playArea.locations}
-            phenomena={opponentState.playArea.phenomena}
-            conspiracies={opponentState.playArea.conspiracies}
-            onCardClick={handleCardClickInPlay}
-            isCurrentPlayer={!isPlayerTurn}
-          />
-        </div>
-      </div>
-
-      {/* Shared Area & Action Panel - Stack vertically on mobile, more compact */}
-      <div className="flex flex-col md:flex-row justify-between items-center space-y-1 md:space-y-0 md:space-x-4 py-1 flex-shrink-0">
-        <div className="w-full md:flex-1 order-2 md:order-1">
+        
+        {/* Game controls */}
+        <div className="mb-4">
           <GameActionPanel
             currentPhase={currentPhase}
             actionsRemaining={actionsRemaining}
@@ -301,49 +333,76 @@ const GameBoard: React.FC = () => {
             isPlayerTurn={isPlayerTurn}
           />
         </div>
-        <div className="order-1 md:order-2">
-           <DisclosureMeter level={disclosureLevel} maxLevel={10} />
+        
+        {/* Disclosure meter */}
+        <div className="mb-4">
+          <DisclosureMeter level={disclosureLevel} maxLevel={10} />
         </div>
-      </div>
-
-      {/* Player's Area - Use flex-grow/shrink, remove min-h on mobile */}
-      <div className="flex flex-col-reverse space-y-1 space-y-reverse flex-grow flex-shrink md:flex-1 overflow-hidden">
-        {/* Bottom bar: Credibility and Deck/Discard */}
-         <div className="flex justify-between items-start space-x-2 flex-shrink-0">
-          <CredibilityTracker
-            playerName="You"
-            credibility={playerState.credibility}
-            maxCredibility={20}
-            isCurrentPlayer={isPlayerTurn}
-          />
-          <div className="text-right p-1 md:p-2 bg-gray-700 rounded text-xs md:text-sm">
+        
+        {/* Player stats - compact */}
+        <div className="flex items-center justify-between p-2 bg-secondary rounded-xl card-shadow mt-auto">
+          <div>
+            <div className="text-xs font-bold">You</div>
+            <div className="flex items-center">
+              <span className="text-primary font-bold">{playerState.credibility}</span>
+              <span className="text-xs text-muted-foreground ml-1">/ 20 Cred</span>
+            </div>
+          </div>
+          <div className="text-right text-xs">
             <div>Deck: {playerState.deck.length}</div>
             <div>Discard: {playerState.discard.length}</div>
           </div>
         </div>
-         {/* Player Hand - Removed fixed height, let PlayerHand control its size */}
-        <div className="flex-shrink-0">
-          <PlayerHand
-            cards={playerState.hand}
-            isOwnHand={true}
-            onCardClick={handleCardClickInHand}
-          />
+      </div>
+      
+      {/* Mobile-only bottom controls bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border p-2 z-20">
+        <div className="flex justify-between items-center">
+          {/* Player stats */}
+          <div className="flex items-center space-x-2">
+            <div className="text-xs">
+              <div className="font-bold">You: {playerState.credibility}/20</div>
+              <div>D:{playerState.deck.length} | Dis:{playerState.discard.length}</div>
+            </div>
+          </div>
+          
+          {/* Phase controls - compact */}
+          <div className="flex-1 mx-2">
+            <button 
+              onClick={isPlayerTurn ? (currentPhase === 'End' ? handleEndTurn : advancePhase) : undefined}
+              className={`w-full py-1 px-2 text-xs rounded-xl ${isPlayerTurn ? 'bg-primary hover:bg-primary/90' : 'bg-secondary'}`}
+              disabled={!isPlayerTurn}
+            >
+              {isPlayerTurn 
+                ? (currentPhase === 'End' ? 'End Turn' : `End ${currentPhase} (${currentPhase === 'Action' ? actionsRemaining : ''})`) 
+                : "Opponent's Turn"}
+            </button>
+          </div>
+          
+          {/* Opponent stats */}
+          <div className="text-xs text-right">
+            <div className="font-bold">Opp: {opponentState.credibility}/20</div>
+            <div>D:{opponentState.deck.length} | Dis:{opponentState.discard.length}</div>
+          </div>
         </div>
-        {/* Player Play Area - Allow scrolling, ensure it takes remaining space */}
-        <div className="flex-grow overflow-y-auto border border-gray-600 rounded p-1 min-h-0">
-          <PlayArea
-            characters={playerState.playArea.characters}
-            locations={playerState.playArea.locations}
-            phenomena={playerState.playArea.phenomena}
-            conspiracies={playerState.playArea.conspiracies}
-            onCardClick={handleCardClickInPlay}
-            isCurrentPlayer={isPlayerTurn}
-          />
+        
+        {/* Disclosure level indicator - very compact */}
+        <div className="mt-1">
+          <div className="text-xs flex justify-between">
+            <span>Disclosure: {disclosureLevel}/10</span>
+            <span>{currentPhase} Phase</span>
+          </div>
+          <div className="w-full bg-secondary rounded-full h-1 mt-1">
+            <div 
+              className="bg-accent h-1 rounded-full" 
+              style={{ width: `${(disclosureLevel / 10) * 100}%` }}
+            ></div>
+          </div>
         </div>
       </div>
 
-      {/* Toast Notifications Container - Moved to top-right on mobile */}
-      <div className="absolute top-4 right-1 md:bottom-4 md:right-4 space-y-2 z-[200]">
+      {/* Toast Notifications Container */}
+      <div className="absolute top-4 right-4 space-y-2 z-[200]">
         {toasts.map(toast => (
           <ToastNotification
             key={toast.id}
@@ -358,4 +417,3 @@ const GameBoard: React.FC = () => {
 };
 
 export default GameBoard;
-

@@ -22,9 +22,8 @@ interface PlayerHandProps {
 
 const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOwnHand, onCardClick }) => {
   return (
-    // Reduced min-height and padding for mobile
-    // Added relative positioning for potential absolute positioned children (like card count)
-    <div className="relative flex justify-center items-end p-1 md:p-2 bg-gray-200 border border-gray-300 rounded min-h-[120px] md:min-h-[160px] text-gray-900 overflow-x-auto">
+    // Even more compact hand with less vertical space and new color scheme
+    <div className="relative flex justify-center items-end p-1 bg-card border-b border-t border-border min-h-[90px] md:min-h-[120px] text-card-foreground overflow-x-auto">
       {cards.map((card, index) => (
         <div
           key={card.id}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Card from './Card';
 import { CharacterCardData, LocationCardData, PhenomenonCardData, ConspiracyCardData } from '../types/CardTypes'; // Assuming types are defined here
 
@@ -21,42 +21,46 @@ const PlayArea: React.FC<PlayAreaProps> = ({
   onCardClick,
   isCurrentPlayer
 }) => {
+  // State to track which card type tab is active
+  const [activeTab, setActiveTab] = useState<string>('all');
+  
+  // Count total cards
+  const totalCards = characters.length + locations.length + phenomena.length + conspiracies.length;
+  
   // Helper function to render a section (heading + horizontal card row)
   const renderSection = (title: string, cards: any[], cardType: string) => {
     if (cards.length === 0) {
-      // Optionally render a placeholder if you want sections to always show
-      // return (
-      //   <div className="mb-4 flex-shrink-0 w-full md:w-auto">
-      //     <h4 className="text-sm font-semibold mb-1">{title}</h4>
-      //     <div className="text-gray-700 text-sm italic">No {title.toLowerCase()} in play</div>
-      //   </div>
-      // );
       return null; // Don't render section if empty
     }
 
     return (
-      <div className="mb-4 flex-shrink-0 w-full md:w-auto"> {/* Ensure sections can shrink/wrap */} 
-        <h4 className="text-sm font-semibold mb-1">{title}</h4>
-        <div className="flex flex-row gap-2 overflow-x-auto pb-2"> 
+      <div className="mb-2 w-full"> 
+        <div className="flex justify-between items-center">
+          <h4 className="text-xs font-semibold">{title} ({cards.length})</h4>
+        </div>
+        <div className="flex flex-row gap-1 overflow-x-auto py-1"> 
           {cards.map(card => (
             <div 
               key={card.id} 
-              className="relative flex-shrink-0" 
+              className="relative flex-shrink-0 transform transition-transform hover:scale-105" 
               onClick={() => isCurrentPlayer && onCardClick(card.id, cardType)}
             >
-              <Card
-                name={card.name}
-                cost={card.cost}
-                power={card.power}
-                type={card.type}
-                abilityText={card.abilityText}
-                flavorText={card.flavorText}
-              />
+              {/* Smaller card size for play area */}
+              <div className="w-24 h-36 md:w-28 md:h-44 scale-90 origin-top-left">
+                <Card
+                  name={card.name}
+                  cost={card.cost}
+                  power={card.power}
+                  type={card.type}
+                  abilityText={card.abilityText}
+                  flavorText={card.flavorText}
+                />
+              </div>
               
               {/* Attached Evidence Cards (Example for Characters) */}
               {cardType === 'character' && card.attachedCards && card.attachedCards.length > 0 && (
-                <div className="absolute -bottom-2 -right-2 bg-yellow-100 border border-yellow-300 rounded-full px-2 py-0.5 text-xs font-bold text-yellow-800">
-                  +{card.attachedCards.length} Evidence
+                <div className="absolute -bottom-1 -right-1 bg-yellow-100 border border-yellow-300 rounded-full px-1 py-0 text-xs font-bold text-yellow-800">
+                  +{card.attachedCards.length}
                 </div>
               )}
             </div>
@@ -66,16 +70,70 @@ const PlayArea: React.FC<PlayAreaProps> = ({
     );
   };
 
+  // Filter sections based on active tab
+  const shouldShowSection = (type: string): boolean => {
+    return activeTab === 'all' || activeTab === type;
+  };
+
   return (
-    <div className={`p-4 rounded-xl border ${isCurrentPlayer ? 'border-blue-300 bg-blue-50 text-blue-900' : 'border-gray-300 bg-gray-50 text-gray-900'}`}>
-      <h3 className="font-bold mb-2">{isCurrentPlayer ? 'Your' : 'Opponent\'s'} Play Area</h3>
+    <div className={`p-2 ${isCurrentPlayer ? 'text-foreground' : 'text-foreground'}`}>
+      {/* Tab navigation for card types */}
+      {totalCards > 0 && (
+        <div className="flex mb-2 border-b border-border text-xs">
+          <button 
+            className={`px-2 py-1 ${activeTab === 'all' ? 'bg-secondary font-bold' : 'bg-background'}`}
+            onClick={() => setActiveTab('all')}
+          >
+            All ({totalCards})
+          </button>
+          {characters.length > 0 && (
+            <button 
+              className={`px-2 py-1 ${activeTab === 'character' ? 'bg-secondary font-bold' : 'bg-background'}`}
+              onClick={() => setActiveTab('character')}
+            >
+              Char ({characters.length})
+            </button>
+          )}
+          {locations.length > 0 && (
+            <button 
+              className={`px-2 py-1 ${activeTab === 'location' ? 'bg-secondary font-bold' : 'bg-background'}`}
+              onClick={() => setActiveTab('location')}
+            >
+              Loc ({locations.length})
+            </button>
+          )}
+          {phenomena.length > 0 && (
+            <button 
+              className={`px-2 py-1 ${activeTab === 'phenomenon' ? 'bg-secondary font-bold' : 'bg-background'}`}
+              onClick={() => setActiveTab('phenomenon')}
+            >
+              Phen ({phenomena.length})
+            </button>
+          )}
+          {conspiracies.length > 0 && (
+            <button 
+              className={`px-2 py-1 ${activeTab === 'conspiracy' ? 'bg-secondary font-bold' : 'bg-background'}`}
+              onClick={() => setActiveTab('conspiracy')}
+            >
+              Consp ({conspiracies.length})
+            </button>
+          )}
+        </div>
+      )}
       
-      {/* Container for all sections, arranged horizontally and wrapping */}
-      <div className="flex flex-row flex-wrap gap-x-6 gap-y-4"> {/* Use flex-wrap and gap */} 
-        {renderSection('Characters', characters, 'character')}
-        {renderSection('Locations', locations, 'location')}
-        {renderSection('Phenomena', phenomena, 'phenomenon')}
-        {renderSection('Conspiracies', conspiracies, 'conspiracy')}
+      {/* Empty state message */}
+      {totalCards === 0 && (
+        <div className="flex justify-center items-center h-full py-4">
+          <p className="text-gray-500 text-sm italic">No cards in play</p>
+        </div>
+      )}
+      
+      {/* Card sections */}
+      <div className="space-y-1"> 
+        {shouldShowSection('character') && renderSection('Characters', characters, 'character')}
+        {shouldShowSection('location') && renderSection('Locations', locations, 'location')}
+        {shouldShowSection('phenomenon') && renderSection('Phenomena', phenomena, 'phenomenon')}
+        {shouldShowSection('conspiracy') && renderSection('Conspiracies', conspiracies, 'conspiracy')}
       </div>
     </div>
   );
