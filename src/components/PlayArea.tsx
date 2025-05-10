@@ -67,7 +67,7 @@ const PlayArea: React.FC<PlayAreaProps> = ({
   };
 
   return (
-    <div className={`p-4 rounded-lg border ${isCurrentPlayer ? 'border-blue-300 bg-blue-50 text-blue-900' : 'border-gray-300 bg-gray-50 text-gray-900'}`}>
+    <div className={`p-4 rounded-xl border ${isCurrentPlayer ? 'border-blue-300 bg-blue-50 text-blue-900' : 'border-gray-300 bg-gray-50 text-gray-900'}`}>
       <h3 className="font-bold mb-2">{isCurrentPlayer ? 'Your' : 'Opponent\'s'} Play Area</h3>
       
       {/* Container for all sections, arranged horizontally and wrapping */}

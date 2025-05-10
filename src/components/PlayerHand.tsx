@@ -47,7 +47,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOwnHand, onCardClick }
             </div>
           ) : (
             // Use the new card back image for opponent's hidden card
-            <div className="border border-gray-400 rounded-lg shadow-md w-28 h-44 md:w-40 md:h-60 overflow-hidden">
+            <div className="border border-gray-400 rounded-xl shadow-md w-28 h-44 md:w-40 md:h-60 overflow-hidden">
               <Image
                 src="/images/card_back.png" // Path relative to public directory
                 alt="Card Back"
@@ -73,4 +73,3 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOwnHand, onCardClick }
 };
 
 export default PlayerHand;
-

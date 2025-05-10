@@ -27,7 +27,7 @@ const DisclosureMeter: React.FC<DisclosureMeterProps> = ({
   const latestEffect = activeEffects.length > 0 ? activeEffects[activeEffects.length - 1] : null;
 
   return (
-    <div className="p-4 border border-purple-300 bg-purple-50 rounded-lg shadow-md text-purple-900">
+    <div className="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-md text-purple-900">
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-bold">Disclosure Meter</h3>
         <div className="flex items-center">

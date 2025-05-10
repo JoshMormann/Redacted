@@ -14,7 +14,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ name, cost, power, type, abilityText, flavorText }) => {
   // Basic card styling using Tailwind CSS
   return (
-    <div className="border border-gray-400 rounded-lg p-2 m-1 bg-white shadow-md w-40 h-60 flex flex-col justify-between text-xs">
+    <div className="border border-gray-400 rounded-xl p-2 m-1 bg-white shadow-md w-40 h-60 flex flex-col justify-between text-xs">
       {/* Top Section: Name and Cost */}
       <div className="flex justify-between items-center mb-1">
         <span className="font-bold truncate" title={name}>{name}</span>

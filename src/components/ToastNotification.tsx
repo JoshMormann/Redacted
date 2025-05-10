@@ -58,7 +58,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
   };
 
   return (
-    <div className={`fixed bottom-4 right-4 ${getBgColor()} text-white p-4 rounded-lg shadow-lg max-w-md animate-fade-in-up z-50 flex items-start`}>
+    <div className={`fixed bottom-4 right-4 ${getBgColor()} text-white p-4 rounded-xl shadow-lg max-w-md animate-fade-in-up z-50 flex items-start`}>
       <div className="mr-2">{getIcon()}</div>
       <div className="flex-1">
         <p className="font-semibold">{message}</p>

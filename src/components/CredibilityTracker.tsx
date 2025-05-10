@@ -20,7 +20,7 @@ const CredibilityTracker: React.FC<CredibilityTrackerProps> = ({
   isCurrentPlayer
 }) => {
   return (
-    <div className={`p-3 rounded-lg shadow-md ${isCurrentPlayer ? 'bg-blue-100 border-blue-300 text-blue-900' : 'bg-gray-100 border-gray-300 text-gray-900'} border`}>
+    <div className={`p-3 rounded-xl shadow-md ${isCurrentPlayer ? 'bg-blue-100 border-blue-300 text-blue-900' : 'bg-gray-100 border-gray-300 text-gray-900'} border`}>
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-bold text-sm">{playerName}'s Credibility</h3>
         <div className="flex items-center">

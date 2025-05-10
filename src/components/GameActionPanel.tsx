@@ -37,7 +37,7 @@ const GameActionPanel: React.FC<GameActionPanelProps> = ({
 
   if (!isPlayerTurn) {
     return (
-      <div className="bg-gray-700 text-white p-4 rounded-lg shadow-md">
+      <div className="bg-gray-700 text-white p-4 rounded-xl shadow-md">
         <h3 className="font-bold text-center">Opponent's Turn</h3>
         <p className="text-center text-sm">Current Phase: {currentPhase}</p>
       </div>
@@ -45,7 +45,7 @@ const GameActionPanel: React.FC<GameActionPanelProps> = ({
   }
 
   return (
-    <div className="bg-blue-800 text-white p-4 rounded-lg shadow-md">
+    <div className="bg-blue-800 text-white p-4 rounded-xl shadow-md">
       <h3 className="font-bold text-center">Your Turn</h3>
       
       <div className="flex justify-between items-center mt-2">
